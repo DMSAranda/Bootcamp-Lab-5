@@ -1,0 +1,55 @@
+version: '3.7'
+networks:
+  codeigniter-network:
+    internal: false
+volumes:
+  codeigniterMysqlVolume:
+    external: true
+services:
+  backend:
+    image: problema-codeigniter
+    depends_on:
+      - mysql
+    networks:
+      - codeigniter-network
+    ports:
+      - target: 8081
+        published: 84
+        protocol: tcp
+        mode: host
+    environment:
+      - APP_ENV=dev
+      - APP_SECRET=thisisnotasecret
+      - APP_DEBUG=true
+      - DATABASE_URL=mysql://app_user:982hhfn9i24ugh925hg9235thrg39w28014t08hij@codeigniter-mysql:3306/codeigniter_db
+    build:
+      context: .
+      network: host
+    volumes:
+      - type: bind
+        source: .
+        target: /var/www/html
+  mysql:
+    container_name: codeigniter-mysql2
+    networks:
+      - codeigniter-network
+    image: mysql:8.0.28
+    environment:
+      MYSQL_ROOT_PASSWORD: Lift-extract-anthony-92
+      MYSQL_DATABASE: codeigniter_db
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: 982hhfn9i24ugh925hg9235thrg39w28014t08hij
+    ports:
+      - "3308:3307"
+    expose:
+      - '3308'
+    volumes:
+      - .mysql:/var/lib/mysql
+
+  adminer:
+    container_name: adminer_php3
+    networks:
+      - codeigniter-network
+    image: adminer
+    ports:
+      - "8082:8080"
